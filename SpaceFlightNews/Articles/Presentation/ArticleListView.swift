@@ -30,36 +30,59 @@ struct ArticleListView: View {
     var body: some View {
         NavigationView {
             VStack {
-                
-                List {
-                    if let error = viewModel.errorMessage {
-                        Text("key_error: \(error)").foregroundColor(.red).padding()
-                    } else {
+                if viewModel.state == .downloadingFirstPage {
+                    Spacer()
+                    ProgressView()
+                    Spacer()
+                } else if let error = viewModel.errorMessage {
+                    ErrorScreenView(errorMessage: error) {
+                        viewModel.reload()
+                    }
+                } else {
+                    HStack {
+                        TextField("key_search", text: $viewModel.searchQuery)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding()
+                            .onSubmit {
+                                viewModel.reload()
+                            }
+                        
+                        if !viewModel.searchQuery.isEmpty {
+                            Button(action: {
+                                viewModel.clearSearchQuery()
+                            }) {
+                                Image(systemName: "x.circle.fill")
+                                    .foregroundColor(.gray)
+                            }
+                            .padding(.trailing)
+                        }
+                    }
+                    
+                    List {
                         ForEach(viewModel.articles) { article in
                             NavigationLink(destination: ArticleDetailView(article: article)) {
                                 ArticleListRow(article: article)
-                                    .onAppear {
-                                        viewModel.loadMoreIfNeeded(item: article)
-                                    }
+                                
                             }
                         }
                         
-                        if viewModel.state == .loadingNextPage {
-                            ProgressView()
-                        }
+                        ProgressView()
+                            .onAppear {
+                                viewModel.loadMoreItems()
+                            }
                     }
-                }
-                .scrollDismissesKeyboard(.immediately)
-                .searchable(text: $viewModel.searchQuery, prompt: "key_search")
-                .refreshable {
-                    viewModel.reload()
+                    .scrollDismissesKeyboard(.immediately)
+                    .refreshable {
+                        viewModel.reload()
+                    }
                 }
             }
             .onAppear {
-                viewModel.reload()
+                if viewModel.state == .idle {
+                    viewModel.reload()
+                }
             }
         }
-        
         .navigationTitle("key_space_news")
     }
 }

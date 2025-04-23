@@ -62,6 +62,7 @@ class DefaultArticlesUseCase: ArticlesUseCase {
     
     func reset() {
         isFetchingMore = false
+        offset = 0
         self.result = [Article]()
     }
     

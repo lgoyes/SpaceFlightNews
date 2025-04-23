@@ -8,11 +8,14 @@
 import Combine
 
 enum ArticleListState {
-    case idle, loadingNextPage, data
+    case idle, downloadingFirstPage, loadingNextPage, data
 }
 
 @MainActor
 class ArticleListViewModel: ObservableObject {
+    private enum Constant {
+        static let downloadErrorMessage = "Error en la descarga.\nPor favor vuelva a intentar en unos instantes.\n Nuestro API es muy malito :D"
+    }
     @Published var articles: [Article] = []
     @Published var searchQuery: String = ""
     @Published var errorMessage: String? = nil
@@ -24,15 +27,21 @@ class ArticleListViewModel: ObservableObject {
         self.articlesUseCase = articlesUseCase
     }
     
-    func loadMoreIfNeeded(item: Article?) {
-        if let item = item, item.id != articles.last?.id { return }
-        if state == .loadingNextPage { return }
+    func clearSearchQuery() {
+        searchQuery = ""
+        reload()
+    }
+    
+    func loadMoreItems() {
+        if state == .loadingNextPage || state == .downloadingFirstPage { return }
+        state = .loadingNextPage
         Task {
             await fetchArticles()
         }
     }
     
     func reload() {
+        state = .downloadingFirstPage
         articlesUseCase.reset()
         Task {
             await fetchArticles()
@@ -40,12 +49,12 @@ class ArticleListViewModel: ObservableObject {
     }
 
     func fetchArticles() async {
-        state = .loadingNextPage
         errorMessage = nil
         await performSearch()
     }
     
     nonisolated func performSearch() async {
+        await articlesUseCase.set(searchQuery: searchQuery)
         try? await articlesUseCase.execute()
         await updateArticles()
     }
@@ -56,11 +65,7 @@ class ArticleListViewModel: ObservableObject {
         do {
             articles = try articlesUseCase.getResult()
         } catch {
-            set(errorMessage: "Error en la descarga")
+            errorMessage = Constant.downloadErrorMessage
         }
-    }
-    
-    func set(errorMessage: String) {
-        self.errorMessage = errorMessage
     }
 }
