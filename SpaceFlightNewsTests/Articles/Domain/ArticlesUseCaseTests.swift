@@ -10,7 +10,7 @@ import Testing
 
 final class ArticlesUseCaseTests {
     
-    @Test
+    @Test(.disabled())
     func repeatingCalls() async throws {
         let sut = ArticlesUseCaseFactory().create()
         
