@@ -1,0 +1,32 @@
+{
+  "configurations" : [
+    {
+      "id" : "D90601FE-26A1-413C-A38D-CF9B492ABB25",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "enabled" : false,
+      "target" : {
+        "containerPath" : "container:SpaceFlightNews.xcodeproj",
+        "identifier" : "79B026E62DB834C500DD4BFD",
+        "name" : "SpaceFlightNewsUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:SpaceFlightNews.xcodeproj",
+        "identifier" : "79B026DC2DB834C500DD4BFD",
+        "name" : "SpaceFlightNewsTests"
+      }
+    }
+  ],
+  "version" : 1
+}
