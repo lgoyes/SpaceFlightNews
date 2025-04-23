@@ -39,16 +39,15 @@ struct ArticleListView: View {
                                 ArticleListRow(article: article)
                             }
                         }
-                        if viewModel.state == .loadingNextPage {
-                            ProgressView()
-                        } else {
-                            ProgressView()
-                                .onAppear {
+                        
+                        ProgressView()
+                            .onAppear {
+                                if viewModel.state == .data {
                                     Task {
                                         await viewModel.fetchArticles()
                                     }
                                 }
-                        }
+                            }
                     }
                     .scrollDismissesKeyboard(.immediately)
                     .searchable(text: $viewModel.searchQuery, prompt: "key_search")
