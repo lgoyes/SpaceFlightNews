@@ -7,44 +7,49 @@
 
 import Combine
 
+enum ArticleListState {
+    case loadingNextPage, data
+}
+
+@MainActor
 class ArticleListViewModel: ObservableObject {
     @Published var articles: [Article] = []
     @Published var searchQuery: String = ""
-    @Published var isLoading = false
     @Published var errorMessage: String? = nil
+    @Published var state: ArticleListState = .data
+    
     private let articlesUseCase: any ArticlesUseCase
     
     init(articlesUseCase: any ArticlesUseCase) {
         self.articlesUseCase = articlesUseCase
     }
 
-    func fetchArticles() {
-        isLoading = true
+    func fetchArticles() async {
+        state = .loadingNextPage
         errorMessage = nil
-        Task {
-            await performSearch()
-        }
+        await performSearch()
     }
     
-    func performSearch() async {
+    nonisolated func performSearch() async {
         do {
             try await articlesUseCase.execute()
         } catch {
-            await set(errorMessage: "perform search error")
+            debugPrint(error.localizedDescription)
         }
+        await updateArticles()
     }
     
-    @MainActor func updateArticles() {
+    func updateArticles() {
         do {
-            isLoading = false
+            state = .data
             errorMessage = nil
             articles = try articlesUseCase.getResult()
         } catch {
-            set(errorMessage: "some error")
+            set(errorMessage: "Error en la descarga")
         }
     }
     
-    @MainActor func set(errorMessage: String) {
+    func set(errorMessage: String) {
         self.errorMessage = errorMessage
     }
 }

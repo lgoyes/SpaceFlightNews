@@ -78,13 +78,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cercare…"
+            "value" : "Buscar…"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Buscar…"
+            "value" : "Cercare…"
           }
         }
       }
