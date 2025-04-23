@@ -20,7 +20,7 @@ class DefaultArticlesUseCase: ArticlesUseCase {
     
     private(set) var error: ArticlesUseCaseError?
     var result: [Article]? {
-        Array(_result)
+        Array(_result).sorted { $0.publishedAt > $1.publishedAt }
     }
     private var _result: Set<Article> = []
     
