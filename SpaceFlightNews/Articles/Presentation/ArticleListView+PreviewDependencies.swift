@@ -10,7 +10,7 @@ import SwiftUI
 #if DEBUG
 class DummyArticlesUseCase: ArticlesUseCase {
     var error: ArticlesUseCaseError?
-    var result: Array<Article>?
+    var result: [Article]?
     
     func execute() async throws(ArticlesUseCaseError) {
         let date = ISO8601DateFormatter().date(from: "2025-04-23T15:48:16Z")!

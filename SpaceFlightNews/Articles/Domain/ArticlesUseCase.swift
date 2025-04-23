@@ -19,7 +19,10 @@ protocol ArticlesUseCase: UseCase where Output == [Article], ErrorType == Articl
 class DefaultArticlesUseCase: ArticlesUseCase {
     
     private(set) var error: ArticlesUseCaseError?
-    private(set) var result: Array<Article>? = []
+    var result: [Article]? {
+        Array(_result)
+    }
+    private var _result: Set<Article> = []
     
     private var searchQuery: String = ""
     private var offset: Int = 0
@@ -41,29 +44,25 @@ class DefaultArticlesUseCase: ArticlesUseCase {
         do {
             let response = try await repository.listArticles(searchQuery: searchQuery, offset: offset, limit: limit)
             handle(response: response)
+            isFetchingMore = false
         } catch {
             self.error = .networkError
+            isFetchingMore = false
             throw self.error!
         }
     }
     
-    func getResult() throws(ArticlesUseCaseError) -> Array<Article> {
-        defer { isFetchingMore = false }
-        if let error = self.error {
-            throw error
-        }
-        return self.result!
-    }
-    
     private func handle(response: [Article]) {
         offset += response.count
-        result?.append(contentsOf: response)
+        for article in response {
+            _result.insert(article)
+        }
     }
     
     func reset() {
         isFetchingMore = false
         offset = 0
-        self.result = [Article]()
+        _result = []
     }
     
     func set(searchQuery: String) {
