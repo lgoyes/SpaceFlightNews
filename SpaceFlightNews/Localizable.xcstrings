@@ -34,13 +34,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Errore: %@"
+            "value" : "Error: %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Error: %@"
+            "value" : "Errore: %@"
           }
         }
       }

@@ -30,5 +30,12 @@ struct APIArticle: Decodable {
 
 struct APIAuthor: Decodable {
     let name: String
-    let socials: [String]?
+    let socials: APISocial?
+}
+
+struct APISocial: Decodable {
+    let x: String?
+    let youtube, instagram: String?
+    let linkedin, mastodon: String?
+    let bluesky: String?
 }

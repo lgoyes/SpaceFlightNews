@@ -39,7 +39,6 @@ class APIClient: RESTAPIFetchable {
         static let validStatusCodeRange: Range<Int> = 200..<300
     }
     private let decoder = JSONDecoder()
-    private let session = URLSession(configuration: URLSessionConfiguration.default)
     
     func fetchData<T: Decodable>(from urlString: String) async throws(RESTAPIFetchableError) -> T {
         guard let url = URL(string: urlString) else {
@@ -50,7 +49,6 @@ class APIClient: RESTAPIFetchable {
         do {
             (data, response) = try await downloadData(from: url)
         } catch {
-            debugPrint((error as! NSError).userInfo)
             throw .connectionFailed
         }
         
@@ -69,7 +67,9 @@ class APIClient: RESTAPIFetchable {
     }
     
     func downloadData(from url: URL) async throws-> (Data, URLResponse) {
-        return try await session.data(from: url)
+        let configuration = URLSessionConfiguration.default
+        configuration.timeoutIntervalForRequest = 60
+        return try await URLSession(configuration: configuration).data(from: url)
     }
     
     func isResponseValid(_ response: URLResponse) -> Bool {

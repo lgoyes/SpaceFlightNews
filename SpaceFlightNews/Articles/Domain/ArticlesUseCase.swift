@@ -13,6 +13,7 @@ protocol ArticlesUseCase: UseCase where Output == [Article], ErrorType == Articl
     func set(searchQuery: String)
     func set(offset: Int)
     func set(limit: Int)
+    func reset()
 }
 
 class DefaultArticlesUseCase: ArticlesUseCase {
@@ -44,13 +45,24 @@ class DefaultArticlesUseCase: ArticlesUseCase {
             self.error = .networkError
             throw self.error!
         }
-        
-        isFetchingMore = false
+    }
+    
+    func getResult() throws(ArticlesUseCaseError) -> Array<Article> {
+        defer { isFetchingMore = false }
+        if let error = self.error {
+            throw error
+        }
+        return self.result!
     }
     
     private func handle(response: [Article]) {
         offset += response.count
         result?.append(contentsOf: response)
+    }
+    
+    func reset() {
+        isFetchingMore = false
+        self.result = [Article]()
     }
     
     func set(searchQuery: String) {

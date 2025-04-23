@@ -9,7 +9,6 @@ import SwiftUI
 
 #if DEBUG
 class DummyArticlesUseCase: ArticlesUseCase {
-    
     var error: ArticlesUseCaseError?
     var result: Array<Article>?
     
@@ -31,6 +30,10 @@ class DummyArticlesUseCase: ArticlesUseCase {
     }
     
     func set(limit: Int) {
+        
+    }
+    
+    func reset() {
         
     }
 }

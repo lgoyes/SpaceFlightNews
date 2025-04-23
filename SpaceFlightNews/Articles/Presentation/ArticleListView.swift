@@ -30,31 +30,37 @@ struct ArticleListView: View {
     var body: some View {
         NavigationView {
             VStack {
-                if let error = viewModel.errorMessage {
-                    Text("key_error: \(error)").foregroundColor(.red).padding()
-                } else {
-                    List {
+                
+                List {
+                    if let error = viewModel.errorMessage {
+                        Text("key_error: \(error)").foregroundColor(.red).padding()
+                    } else {
                         ForEach(viewModel.articles) { article in
                             NavigationLink(destination: ArticleDetailView(article: article)) {
                                 ArticleListRow(article: article)
+                                    .onAppear {
+                                        viewModel.loadMoreIfNeeded(item: article)
+                                    }
                             }
                         }
                         
-                        ProgressView()
-                            .onAppear {
-                                if viewModel.state == .data {
-                                    Task {
-                                        await viewModel.fetchArticles()
-                                    }
-                                }
-                            }
+                        if viewModel.state == .loadingNextPage {
+                            ProgressView()
+                        }
                     }
-                    .scrollDismissesKeyboard(.immediately)
-                    .searchable(text: $viewModel.searchQuery, prompt: "key_search")
+                }
+                .scrollDismissesKeyboard(.immediately)
+                .searchable(text: $viewModel.searchQuery, prompt: "key_search")
+                .refreshable {
+                    viewModel.reload()
                 }
             }
-            .navigationTitle("key_space_news")
+            .onAppear {
+                viewModel.reload()
+            }
         }
+        
+        .navigationTitle("key_space_news")
     }
 }
 
