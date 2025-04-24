@@ -1,5 +1,5 @@
 //
-//  ArticlesUseCaseTests.swift
+//  ArticlesUseCaseIntegrationTests.swift
 //  SpaceFlightNews
 //
 //  Created by Luis David Goyes Garces on 23/4/25.
@@ -8,7 +8,7 @@
 import Testing
 @testable import SpaceFlightNews
 
-final class ArticlesUseCaseTests {
+final class ArticlesUseCaseIntegrationTests {
     
     @Test(.disabled())
     func repeatingCalls() async throws {
