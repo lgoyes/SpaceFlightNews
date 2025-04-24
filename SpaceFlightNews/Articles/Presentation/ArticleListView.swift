@@ -14,6 +14,7 @@ struct ArticleListRow: View {
         VStack(alignment: .leading) {
             Text(article.title)
                 .bold()
+                .accessibilityIdentifier("ArticleRowTitle_\(article.id)")
             Text(PublicationDateFormatter(article: article).getPublicationDate())
                 .font(.subheadline)
                 .foregroundColor(.gray)

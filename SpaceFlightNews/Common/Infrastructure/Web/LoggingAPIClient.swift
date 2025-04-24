@@ -36,5 +36,4 @@ class LoggingAPIClient: RESTAPIFetchable {
             throw error
         }
     }
-    
 }
