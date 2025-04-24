@@ -14,11 +14,4 @@ struct Article: Identifiable, Equatable, Hashable {
     let imageUrl: URL?
     let publishedAt: Date
     let url: URL
-    
-    var formattedPublishedDate: String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "es_ES")
-        formatter.dateStyle = .long
-        return formatter.string(from: publishedAt)
-    }
 }

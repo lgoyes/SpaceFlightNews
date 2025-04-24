@@ -7,6 +7,16 @@
 
 import SwiftUI
 
+struct PublicationDateFormatter {
+    private let formatter = DateFormatter()
+    let article: Article
+    func getPublicationDate() -> String {
+        formatter.locale = Locale(identifier: "es_ES")
+        formatter.dateStyle = .long
+        return formatter.string(from: article.publishedAt)
+    }
+}
+
 struct ArticleDetailView: View {
     private enum Constant {
         static let verticalSpacing: CGFloat = 16
@@ -16,27 +26,47 @@ struct ArticleDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Constant.verticalSpacing) {
-                if let url = article.imageUrl {
-                    AsyncImage(url: url) { image in
-                        image.resizable().aspectRatio(contentMode: .fit)
-                    } placeholder: {
-                        ProgressView()
-                    }
-                }
-                Text(article.title)
-                    .font(.title)
-                    .bold()
-                Text(article.formattedPublishedDate)
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                Text(article.summary)
-                Link("key_read_more", destination: article.url)
-                    .foregroundColor(.blue)
-                
+                buildImage()
+                buildTitle()
+                buildPublicationDate()
+                buildSummary()
+                buildArticleLink()
             }
             .padding()
         }
         .navigationTitle("key_details")
+    }
+    
+    @ViewBuilder
+    private func buildImage() -> some View {
+        if let url = article.imageUrl {
+            AsyncImage(url: url) { image in
+                image.resizable().aspectRatio(contentMode: .fit)
+            } placeholder: {
+                ProgressView()
+            }
+        }
+    }
+    
+    private func buildTitle() -> some View {
+        Text(article.title)
+            .font(.title)
+            .bold()
+    }
+    
+    private func buildPublicationDate() -> some View {
+        Text(PublicationDateFormatter(article: article).getPublicationDate())
+            .font(.subheadline)
+            .foregroundColor(.gray)
+    }
+    
+    private func buildSummary() -> some View {
+        Text(article.summary)
+    }
+    
+    private func buildArticleLink() -> some View {
+        Link("key_read_more", destination: article.url)
+            .foregroundColor(.blue)
     }
 }
 

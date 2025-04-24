@@ -27,11 +27,6 @@ class ArticleListViewModel: ObservableObject {
         self.articlesUseCase = articlesUseCase
     }
     
-    func clearSearchQuery() {
-        searchQuery = ""
-        reload()
-    }
-    
     func loadMoreItems() {
         if state == .loadingNextPage || state == .downloadingFirstPage { return }
         state = .loadingNextPage
