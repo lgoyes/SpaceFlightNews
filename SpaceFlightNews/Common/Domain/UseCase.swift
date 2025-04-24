@@ -22,10 +22,6 @@ protocol UseCase: Resultable, Command {
 }
 
 extension UseCase {
-    func execute() async throws(ErrorType) {
-        fatalError("Execute not implemented")
-    }
-    
     func getResult() throws(ErrorType) -> Output {
         if let error {
             throw error

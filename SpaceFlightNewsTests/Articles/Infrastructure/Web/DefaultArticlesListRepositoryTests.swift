@@ -34,7 +34,7 @@ final class DefaultArticlesListRepositoryTests {
         sut = DefaultArticlesListRepository(apiClient: clientStub, baseURL: "", articleMapper: articleMapper)
     }
     
-    @Test("GIVEN some valid response from APIClient, WHEN listArticles, THEN it should return some cities")
+    @Test("GIVEN some valid response from APIClient, WHEN listArticles, THEN it should return some articles")
     func listArticles() async throws {
         GIVEN_someValidResponseFromAPIClient()
         try await WHEN_listArticles()
@@ -42,17 +42,17 @@ final class DefaultArticlesListRepositoryTests {
     }
     
     func GIVEN_someValidResponseFromAPIClient() {
-        clientStub.response = [
-            APIArticleFactory.create()
-        ]
+        clientStub.response = APIArticleResponse(count: 10, next: "any-next", previous: nil, results: [
+            DummyAPIArticleFactory.create()
+        ])
     }
     
     func WHEN_listArticles() async throws {
-        result = try await sut.listArticles(searchQuery: <#T##String#>, offset: <#T##Int#>, limit: <#T##Int#>)
+        result = try await sut.listArticles(searchQuery: "some-query", offset: 0, limit: 10)
     }
     
     func THEN_itShouldReturnSomeArticles() {
-        #expect(result[0] == ArticleFactory.create())
+        #expect(result[0] == DummyArticleFactory.create())
     }
     
     @Test("GIVEN some invalid response from APIClient, WHEN listArticles, THEN it should throw an error")
@@ -68,13 +68,13 @@ final class DefaultArticlesListRepositoryTests {
     
     func WHEN_listArticles_delayed() {
         delayed_listArticles_closure = { [unowned self] in
-            self.result = try await self.sut.listArticles(searchQuery: <#T##String#>, offset: <#T##Int#>, limit: <#T##Int#>)
+            self.result = try await self.sut.listArticles(searchQuery: "any-query", offset: 0, limit: 10)
         }
     }
     
     func THEN_itShouldThrowAnError() async {
         await #expect(throws: ArticlesListRepositoryError.networkError) {
-            try await delayed_listArticles_closure()
+            try await self.delayed_listArticles_closure()
         }
     }
 }
